@@ -1,0 +1,127 @@
+import json
+import pandas as pd
+from pandas import DataFrame
+import csv
+
+
+
+#MAIN
+with open('demo.json') as file:
+    json_value = json.load(file)
+    
+    #TO READ JSON DATA
+    new_data = json.dumps(json_value, indent=2)
+    print(new_data)
+    figure=0
+    totalnum_hob=totalnum_age=0
+    total_male=total_female=0
+    total_child=0
+    old=0
+    young=150
+    totalchild_age=0
+    oldchild = 0
+    youngchild = 150
+    total_childmale =total_childfemale= 0
+    num_child = 0
+    #print(json_value)
+
+person_data = json_value['person']
+data_file = open('Database.csv', 'w')
+csv_writer = csv.writer(data_file)
+count = 0
+
+for p in person_data: 
+    if count == 0: 
+  
+       # Writing headers of CSV file 
+        header = p.keys() 
+        csv_writer.writerow(header) 
+        count += 1
+    # Writing data of CSV file 
+    csv_writer.writerow(p.values())
+data_file.close() 
+
+df = pd.read_csv("Database.csv", header=None)
+print(df)
+
+for y in json_value['person']:
+      
+    figure += 1
+    #PRINT FULLNAME
+    print("Full Name Person ",figure," :",y['firstName'],y['lastName'])
+
+    #TOTAL OF HOBBIES
+    num_hob = len(y['hobbies'])
+    totalnum_hob += num_hob
+
+    #TOTAL AGE (MAIN)
+    num_age = y['age']
+    totalnum_age += num_age
+
+    #DETERMINE OLDEST/YOUNGEST
+    if old < num_age:
+       old = num_age
+    if young > num_age:
+       young = num_age
+    
+    #TOTAL OF MALE/FEMALE
+    if (y['sex'])=='male':
+        total_male += 1
+    else:
+        total_female += 1
+
+    #TOTAL OF CHILD
+    num_child = (len(y['children']))
+    total_child += num_child
+
+    #TOTAL CHILD AGE
+    for x in y['children']:
+        child_age = (x['age'])
+        totalchild_age += child_age
+        num_child += 1
+
+    #DETERMINE YOUNGEST/OLDEST CHILD
+        if oldchild < child_age:
+           oldchild = child_age
+       
+        if youngchild > child_age:
+           youngchild = child_age
+
+    #TOTAL MALE/FEMALE CHILD
+        if((x['sex']).lower()=='male'):
+          total_childmale += 1
+        else:
+          total_childfemale += 1
+
+    #DEBUGGER   
+    #print(young)
+    #print(old)
+    #print(total_male)
+    #print(total_female)
+    #print(total_childfemale)
+
+#FUNCTION
+def avg_hobb(a,b):      #AVERAGE HOBBIES
+    return round(a/b)  
+def avg_age(c,d):       #AVERAGE AGE(MAIN)
+    return round(c/d)
+def avg_numchild(e,f):  #AVERAGE NUMBER OF CHILD
+    return round(e/f)
+def avg_age_child(g,h): #AVERAGE CHILDREN AGE
+    return round(g/h)
+
+#PRINT OUTPUT
+print("*******************************************")
+print('Average Number Hobbies is : ', avg_hobb(totalnum_hob,figure))
+print('Average Age(Main)         : ', avg_age(totalnum_age,figure))
+print('Oldest person is          : ', old)
+print('Youngest person is        : ', young)
+print('Total Male                : ', total_male)
+print('Total Female              : ', total_female)
+print('Average Number of Children: ', avg_numchild(total_child,figure))
+print('Average Age(Child)        : ', avg_age_child(totalchild_age,total_child))
+print('Oldest(Child)             : ', oldchild)
+print('Youngest(Child)           : ', youngchild)
+print('Total Male(Child)         : ', total_childmale)
+print('Total Female(Child)       : ', total_childfemale)   
+print("*******************************************")
